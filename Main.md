@@ -66,4 +66,36 @@ The two commands above will enumerate the entire website for accessible director
 
 For people who's gonna ask why I store the file extensions in a file, it's because it's easy to store them all in one file and I can make sure I don't miss out any file extension.
 
-Whatever the output of these two commands for you, is what you will use
+Whatever the output of these two commands for you, is what you will use and access
+
+## Gaining Initial Foothold
+
+If you properly enumerated the website in the previous step, you'd know that there is a FTP directory that connects the website and the FTP server
+
+If you have the Kali Linux tool called **"Webshells"** installed then copy the Php reverse shell file and modify the listening IP and port.
+
+**NOTE: IF YOU DON'T HAVE THE TOOL INSTALLED, THEN INSTALL IT USING THE COMMAND BELOW**
+
+```
+sudo apt install webshells
+```
+
+After modifying the file to have the listening IP and port, upload the file to the FTP server then execute the file.
+
+Before running the Php reverse shell file, have a listener running on your Kali Linux box using the commands below:
+
+```
+nc -lvnp 9999
+```
+
+or
+
+```
+ncat -lvnp 9999
+```
+
+Change the port based on what port you have entered on the Php reverse shell file.
+
+---  
+
+After getting initial foothold on the system, your first instinct should be to find any suspicious files and directories
