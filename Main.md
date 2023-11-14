@@ -40,7 +40,8 @@ nmap -A -O --osscan-guess --osscan-limit -vv -T5 -oN aggressive-scan.txt
 nmap --script vuln -p 21,22,80 10.10.x.x -oN nse_script_scan.txt
 ```
 
-For the ports, it will differ depending on the Half TCP scan output
+For the ports, it will differ depending on the Half TCP scan output  
+Use the Nmap scan results to progress into the challenge
 
 ## Enumeration of the website
 
